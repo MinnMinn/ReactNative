@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.reduxsaga"
+        applicationId "com.foodapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -1,8 +1,8 @@
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'ReduxSaga' do
-  # Pods for ReduxSaga
+target 'foodapp' do
+  # Pods for foodapp
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
   pod 'RCTRequired', :path => "../node_modules/react-native/Libraries/RCTRequired"
@@ -34,7 +34,7 @@ target 'ReduxSaga' do
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  target 'ReduxSagaTests' do
+  target 'foodappTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -42,10 +42,10 @@ target 'ReduxSaga' do
   use_native_modules!
 end
 
-target 'ReduxSaga-tvOS' do
-  # Pods for ReduxSaga-tvOS
+target 'foodapp-tvOS' do
+  # Pods for foodapp-tvOS
 
-  target 'ReduxSaga-tvOSTests' do
+  target 'foodapp-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
