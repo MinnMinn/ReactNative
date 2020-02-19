@@ -7,11 +7,21 @@ import {
   Dimensions
 } from "react-native";
 import ScrollableTabView, { DefaultTabBar } from 'react-native-scrollable-tab-view';
-import All from "./home_child/All";
-import Menu from "./home_child/Menu";
-import Popular from "./home_child/Popular";
+import All from "./components/home_child/All";
+import Menu from "./components/home_child/Menu";
+import Popular from "./components/home_child/Popular";
+import { connect } from 'react-redux';
+import { getFoods, getFood } from './sagas/Api';
+import { listAll, getFoodById } from './actions/index';
 
-export default class Home extends React.Component{
+class Home extends React.Component{
+
+  componentDidMount() {
+    getFoods().then(foods => {
+      this.props.listAll(foods);
+    });
+  }
+
   render(){
     return(
       <View style={styles.container}>
@@ -33,7 +43,7 @@ export default class Home extends React.Component{
                   backgroundColor:'green'
                 }} />}
             >
-              <All tabLabel="All" props={this.props} />
+              <All tabLabel="All" foods={this.props} />
               <Menu tabLabel="Menu" props={this.props} />
               <Popular tabLabel="Popular" props={this.props} />
 
@@ -72,3 +82,19 @@ var styles = StyleSheet.create({
     fontSize:25
   }
 });
+
+function mapStateToProps(state) {
+  return { 
+    foods: state.foods
+  };
+}
+
+function mapDispatchToProps(dispatch, props) {
+  return {
+    listAll : (foods) => {
+      dispatch(listAll(foods));
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

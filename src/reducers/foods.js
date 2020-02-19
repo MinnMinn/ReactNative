@@ -6,7 +6,6 @@ const foodReducer = (state = initalState, action) => {
     switch (action.type) {
         case types.LIST_ALL:
             state = [...action.foods];
-            console.log(action)
             return [...state];
         // case FETCH_FAILED:
         //     return [];

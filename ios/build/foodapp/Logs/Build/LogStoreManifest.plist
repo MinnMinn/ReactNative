@@ -5,6 +5,41 @@
 	<key>logFormatVersion</key>
 	<integer>10</integer>
 	<key>logs</key>
-	<dict/>
+	<dict>
+		<key>5764C164-B69E-481B-B70B-89258F77065E</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>5764C164-B69E-481B-B70B-89258F77065E.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>E</string>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>foodapp project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>foodapp</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Building workspace foodapp with scheme foodapp and configuration Debug</string>
+			<key>timeStartedRecording</key>
+			<real>603791730.64161205</real>
+			<key>timeStoppedRecording</key>
+			<real>603791733.29616797</real>
+			<key>title</key>
+			<string>Building workspace foodapp with scheme foodapp and configuration Debug</string>
+			<key>uniqueIdentifier</key>
+			<string>5764C164-B69E-481B-B70B-89258F77065E</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

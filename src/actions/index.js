@@ -8,21 +8,21 @@ export const listAll = (foods) => {
     };
 }
 
-export function fetchSuccess(foods) {
+export function getFoodById(food) {
     return { 
-        type: 'FETCH_SUCCESS',
-        foods 
+        type: types.FOOD_DETAIL,
+        food
     };
 }
 
-export function fetchError() {
-    return { type: 'FETCH_ERROR' };
-}
+// export function fetchError() {
+//     return { type: 'FETCH_ERROR' };
+// }
 
-export function fetchDataThunk() {
-    return dispatch => {
-        dispatch(fetchSuccess(foods));
-        getFoods()
-        .then(res => fetchSuccess(res))
-    };
-}
+// export function fetchDataThunk() {
+//     return dispatch => {
+//         dispatch(fetchSuccess(foods));
+//         getFoods()
+//         .then(res => fetchSuccess(res))
+//     };
+// }
