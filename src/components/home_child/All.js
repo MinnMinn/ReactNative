@@ -6,20 +6,49 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  RefreshControl
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { connect } from 'react-redux';
+import { getFoods } from './../../sagas/Api';
+import { listAll } from './../../actions/index';
 
-export default class All extends React.Component{
+class All extends React.Component{
   constructor(props){
     super(props);
     this.state={
-      data: props.foods,
-      data_temp: props.foods,
+      data: [],
+      data_temp: [],
+      refreshing: false,
       search: ''
     }
+  }
+
+  getAll = () => {
+    this.setState({
+      refreshing: true
+    })
+    getFoods().then(foods => {
+      this.props.listAll(foods);
+      this.setState({
+        data: foods,
+        data_temp: foods,
+        refreshing: false
+      })
+    }).catch((error) => {
+      this.setState({
+        data: [],
+        data_temp: [],
+        refreshing: false
+      })
+    });
+  }
+
+  UNSAFE_componentWillMount() {
+      this.getAll();
   }
 
   _rating(item){
@@ -61,7 +90,7 @@ export default class All extends React.Component{
               </View>
           </View>
           <TouchableOpacity 
-          onPress={()=>this.props.foods.navigation.navigate("DetailScreen",{
+          onPress={()=>this.props.props.navigation.navigate("DetailScreen",{
             item: item
           })}
           style={styles.button}>
@@ -87,8 +116,8 @@ export default class All extends React.Component{
   }
 
   _search(text){
-      let data = this.state.data_temp.filter((value) => {
-        return value.title.indexOf(text) !== -1;
+      let data = this.state.data_temp.filter(value => {
+        return value.title.toUpperCase().indexOf(text) !== -1;
       });
       this.setState({
         data:data,
@@ -97,7 +126,6 @@ export default class All extends React.Component{
   }
 
   render(){
-    const { foods } = this.props.foods
     return(
       <View style={styles.container}>
           <View style={styles.section}>
@@ -105,6 +133,7 @@ export default class All extends React.Component{
                 placeholder="Search.."
                 style={{ flex:1, marginLeft:10}}
                 value={this.state.search}
+                keyboardAppearance={true}
                 onChangeText={(text)=>this._search(text)}
               />
               <TouchableOpacity
@@ -120,11 +149,17 @@ export default class All extends React.Component{
           </View>
           <View style={styles.flatList}>
               <FlatList
-                data={foods}
+                data={this.state.data}
                 renderItem={this.renderItem}
-                keyExtractor={(item, index)=>item.id}
+                keyExtractor={(item, index)=>index.toString()}
                 ItemSeparatorComponent={this.ItemSeparatorComponent}
-                showsVerticalScrollIndicator={false}
+                showsVerticalScrollIndicator={true}
+                refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.getAll}
+                />
+              }
               />
           </View>
       </View>
@@ -206,3 +241,19 @@ var styles = StyleSheet.create({
     marginTop:10
   }
 });
+
+function mapStateToProps(state) {
+  return { 
+    foods: state.foods
+  };
+}
+
+function mapDispatchToProps(dispatch, props) {
+  return {
+    listAll : (foods) => {
+      dispatch(listAll(foods));
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(All);

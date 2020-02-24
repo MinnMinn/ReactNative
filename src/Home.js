@@ -43,7 +43,7 @@ class Home extends React.Component{
                   backgroundColor:'green'
                 }} />}
             >
-              <All tabLabel="All" foods={this.props} />
+              <All tabLabel="All" props={this.props} />
               <Menu tabLabel="Menu" props={this.props} />
               <Popular tabLabel="Popular" props={this.props} />
 
