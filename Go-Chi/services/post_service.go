@@ -57,7 +57,6 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// DeletePost remove a spesific post
 func DeletePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := driver.DBConn()

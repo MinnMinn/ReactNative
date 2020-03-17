@@ -3,10 +3,15 @@ package repository
 import "Go-Chi/Model"
 
 type FriendService interface {
-	CheckAddFriend(friends Model.Friends) bool
+	CheckNonAddFriend(friends Model.Friends) bool
 	AddFriend(friends Model.Friends) error
-	FindFriendsOfUser(m Model.Mail) []string
+	FindFriendsOfUser(m Model.Email) []string
 	FindCommonFriends(friends Model.Friends)[]string
+	CheckNonFollow(subscribe Model.Request) bool
+	Follow(subscribe Model.Request) error
+	CheckNonBlock(subscribe Model.Request) bool
+	Block(subscribe Model.Request) error
+	NonBlockByEmail(sender Model.Sender) []string
 }
 
 //func AllPosts() ([]Model.Post) {

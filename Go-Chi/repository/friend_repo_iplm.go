@@ -2,9 +2,8 @@ package repository
 
 import (
 	"Go-Chi/Model"
+	"Go-Chi/driver"
 	"database/sql"
-	"fmt"
-	"rest-api-mysql/driver"
 )
 
 type FriendSer struct {
@@ -17,15 +16,14 @@ func FriendRepo(db *sql.DB) FriendService {
 	}
 }
 
-func (s *FriendSer) CheckAddFriend(friends Model.Friends) bool {
-	connect, err := driver.DbConn().Query("select `user_id` from `connection` where `user_id` = (select `id` from `user` where `email`=?) AND `connect_id` = (select `id` from `user` where `email`=?)", friends.Friends[0], friends.Friends[1])
+func (s *FriendSer) CheckNonAddFriend(friends Model.Friends) bool {
+	connect, err := driver.DBConn().Query("select `user_id` from `connection` where `user_id` = (select `id` from `user` where `email`=?) AND `connect_id` = (select `id` from `user` where `email`=?)", friends.Friends[0], friends.Friends[1])
 	catch(err)
 
 	for connect.Next(){
 		var userId sql.NullInt64
 		err = connect.Scan(&userId)
 		catch(err)
-		fmt.Println(userId)
 		if userId.Valid {
 			return false
 		}
@@ -36,94 +34,108 @@ func (s *FriendSer) CheckAddFriend(friends Model.Friends) bool {
 }
 
 func (s *FriendSer) AddFriend(friends Model.Friends) error{
-	user, err := driver.DbConn().Query("select `id` from `user` where `email`=?", friends.Friends[0])
+	addFriend, err := driver.DBConn().Prepare("INSERT `connection` SET user_id=(select `id` from `user` where `email`=?), connect_id=(select `id` from `user` where `email`=?)")
 	catch(err)
-	connectUser, err := driver.DbConn().Query("select `id` from `user` where `email`=?", friends.Friends[1])
+	_, err = addFriend.Exec(friends.Friends[0], friends.Friends[1])
 	catch(err)
-	addFriend, err := driver.DbConn().Prepare("INSERT `connection` SET user_id=?, connect_id=?")
+	_, err = addFriend.Exec(friends.Friends[1], friends.Friends[0])
 	catch(err)
-	var user_id int
-	for user.Next(){
-		user.Scan(&user_id)
-	}
-	var connect_id int
-	for connectUser.Next(){
-		connectUser.Scan(&connect_id)
-	}
-	_, err = addFriend.Exec(user_id, connect_id)
-	catch(err)
-	_, err = addFriend.Exec(connect_id, user_id)
-	catch(err)
-	defer user.Close()
-	defer connectUser.Close()
 	defer addFriend.Close()
 	return err
 }
 
-func (s *FriendSer) FindFriendsOfUser(m Model.Mail) []string {
-	idFriends, err := driver.DbConn().Query("select `connect_id` from `connection` where `user_id` = (select `id` from `user` where `email`=?)", m.Mail)
-	var id []int
+func (s *FriendSer) FindFriendsOfUser(m Model.Email) []string {
+	emailFriends, err := driver.DBConn().Query("select `email` from `user` where `id` in (select `connect_id` from `connection` where `user_id` = (select `id` from `user` where `email`=?))", m.Email)
+	catch(err)
 	var email []string
-	for idFriends.Next(){
-		var connect_id int
-		err = idFriends.Scan(&connect_id)
+	for emailFriends.Next(){
+		var e string
+		err = emailFriends.Scan(&e)
 		catch(err)
-		id = append(id, connect_id)
-		emailFriends, err := driver.DbConn().Query("select `email` from `user` where `id`=?", connect_id)
-		for emailFriends.Next(){
-			var mail string
-			err = emailFriends.Scan(&mail)
-			catch(err)
-			email = append(email, mail)
-		}
+		email = append(email, e)
 	}
 	return email
 }
 
 func (s *FriendSer) FindCommonFriends(friends Model.Friends)[]string{
-	friendsOfUser1, err := driver.DbConn().Query("SELECT `connect_id` FROM `connection` where `user_id` = (select `id` from `user` where `email`=?)", friends.Friends[0])
+	commonFriends, err := driver.DBConn().Query("SELECT `email` from `user` WHERE `id` IN (SELECT `user_id` from `connection` JOIN (SELECT `id` FROM `user` where `email` in ( ?, ?)) t ON `connect_id` = `id` group by `user_id` having count(`user_id`) > 1)", friends.Friends[0], friends.Friends[1])
 	catch(err)
-	friendsOfUser2, err := driver.DbConn().Query("SELECT `connect_id` FROM `connection` where `user_id` = (select `id` from `user` where `email`=?)", friends.Friends[1])
-	catch(err)
-
-	var idUser1 []int
-	for friendsOfUser1.Next(){
-		var idUser int
-		friendsOfUser1.Scan(&idUser)
-		idUser1 = append(idUser1, idUser)
-	}
-
-	var idUser2 []int
-	for friendsOfUser2.Next(){
-		var idUser int
-		friendsOfUser2.Scan(&idUser)
-		idUser2 = append(idUser2, idUser)
-	}
-
-	var commonIds []int
-	for i := 0; i < len(idUser1); i++ {
-		for j := 0; j <len(idUser2); j++ {
-			if idUser1[i] == idUser2[j] {
-				commonIds = append(commonIds, idUser1[i])
-			}
-		}
-	}
-
 	var email []string
-	for i:= 0; i < len(commonIds); i++ {
-		emailCommonFriends, err := driver.DbConn().Query("select `email` from `user` where `id`=?", commonIds[i])
-		catch(err)
-		for emailCommonFriends.Next(){
-			var mail string
-			emailCommonFriends.Scan(&mail)
-			email = append(email, mail)
-		}
+	for commonFriends.Next(){
+		var e string
+		commonFriends.Scan(&e)
+		email = append(email, e)
 	}
 	return email
 }
 
+func (s *FriendSer) CheckNonFollow(subscribe Model.Request) bool {
+	follow, err := driver.DBConn().Query("select `user_id` from `follow` where `user_id` = (select `id` from `user` where `email`=?) AND `follow_id` = (select `id` from `user` where `email`=?)", subscribe.Requestor, subscribe.Target)
+	catch(err)
+
+	for follow.Next(){
+		var userId sql.NullInt64
+		err = follow.Scan(&userId)
+		catch(err)
+		if userId.Valid {
+			return false
+		}
+	}
+
+	defer follow.Close()
+	return true
+}
+
+func (s *FriendSer) Follow(subscribe Model.Request) error {
+	followUser, err := driver.DBConn().Prepare("INSERT `follow` SET `user_id`=(select `id` from `user` where `email`=?), follow_id=(select `id` from `user` where `email`=?)")
+	catch(err)
+	_, err = followUser.Exec(subscribe.Requestor, subscribe.Target)
+	catch(err)
+	defer followUser.Close()
+	return err
+}
+
+func (s *FriendSer) CheckNonBlock(subscribe Model.Request) bool {
+	block, err := driver.DBConn().Query("select `user_id` from `block` where `user_id` = (select `id` from `user` where `email`=?) AND `block_id` = (select `id` from `user` where `email`=?)", subscribe.Requestor, subscribe.Target)
+	catch(err)
+
+	for block.Next(){
+		var userId sql.NullInt64
+		err = block.Scan(&userId)
+		catch(err)
+		if userId.Valid {
+			return false
+		}
+	}
+
+	defer block.Close()
+	return true
+}
+
+func (s *FriendSer) Block(subscribe Model.Request) error {
+	blockUser, err := driver.DBConn().Prepare("INSERT `block` SET `user_id`=(select `id` from `user` where `email`=?), block_id=(select `id` from `user` where `email`=?)")
+	catch(err)
+	_, err = blockUser.Exec(subscribe.Requestor, subscribe.Target)
+	catch(err)
+	defer blockUser.Close()
+	return err
+}
+
+func (s *FriendSer) NonBlockByEmail(recipients Model.Sender) []string {
+	nonBlockId, err := driver.DBConn().Query("SELECT `email` FROM `user` WHERE `id` NOT IN (SELECT `block_id` from `block` join( SELECT `id` FROM `user` where `email` = ?) `u` ON `user_id` = `u`.`id`)", recipients.Sender)
+	catch(err)
+	var emails []string
+	for nonBlockId.Next() {
+		var email string
+		err = nonBlockId.Scan(&email)
+		catch(err)
+		emails = append(emails, email)
+	}
+	return emails
+}
+
 func catch(err error) {
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
 }

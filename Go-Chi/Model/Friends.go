@@ -1,7 +1,7 @@
 package Model
 
 type Friends struct {
-	Success bool
+	Success bool	`"json: success"`
 	Friends []string `json: "friends"`
-	Count int
+	Count int		`"json: count"`
 }

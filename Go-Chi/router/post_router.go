@@ -23,6 +23,9 @@ func Post_router() {
 	router.Post("/addfriend", services.AddFriend)
 	router.Get("/findFriendOfUser", services.FindFriendsOfUser)
 	router.Get("/findCommonFriends", services.FindCommonFriends)
+	router.Post("/followFriend", services.FollowFriend)
+	router.Post("/blockFriend", services.BlockFriend)
+	router.Get("/receiveUpdatesFromEmail", services.ReceiveUpdatesFromEmail)
 	http.ListenAndServe(":8005", logger())
 }
 
