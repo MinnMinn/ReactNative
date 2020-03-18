@@ -1,6 +1,7 @@
 package router
 
 import (
+	"Go-Chi/controllers"
 	"Go-Chi/services"
 	"fmt"
 	"github.com/go-chi/chi"
@@ -20,12 +21,11 @@ func Post_router() {
 	router.Post("/posts", services.CreatePost)
 	router.Put("/posts/{id}", services.UpdatePost)
 	router.Delete("/posts/{id}", services.DeletePost)
-	router.Post("/addfriend", services.AddFriend)
-	router.Get("/findFriendOfUser", services.FindFriendsOfUser)
-	router.Get("/findCommonFriends", services.FindCommonFriends)
-	router.Post("/followFriend", services.FollowFriend)
-	router.Post("/blockFriend", services.BlockFriend)
-	router.Get("/receiveUpdatesFromEmail", services.ReceiveUpdatesFromEmail)
+	router.Post("/addfriend", controllers.AddFriend)
+	router.Get("/findFriendOfUser", controllers.FindFriendsOfUser)
+	router.Get("/findCommonFriends", controllers.FindCommonFriends)
+	router.Post("/followFriend", controllers.FollowFriend)
+	router.Post("/blockFriend", controllers.BlockFriend)
 	http.ListenAndServe(":8005", logger())
 }
 

@@ -1,9 +1,9 @@
 package services
 
 import (
-	"Go-Chi/Model"
+	"Go-Chi/models"
 	"Go-Chi/driver"
-	"Go-Chi/repository"
+	"Go-Chi/repositories"
 	"encoding/json"
 	"fmt"
 	"github.com/go-chi/chi"
@@ -14,7 +14,7 @@ import (
 func AllPosts(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := driver.DBConn()
-	postRepo := repository.NewPostRepo(db)
+	postRepo := repositories.NewPostRepo(db)
 	var posts, _ = postRepo.AllPosts()
 	json.NewEncoder(w).Encode(posts)
 	respondwithJSON(w, http.StatusCreated, map[string]string{"message": "successfully created"})
@@ -23,7 +23,7 @@ func AllPosts(w http.ResponseWriter, r *http.Request) {
 func DetailPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := driver.DBConn()
-	postRepo := repository.NewPostRepo(db)
+	postRepo := repositories.NewPostRepo(db)
 	id := chi.URLParam(r, "id")
 	number, _ := strconv.ParseInt(id, 10, 0)
 	var post, _ = postRepo.DetailPost(number)
@@ -34,8 +34,8 @@ func DetailPost(w http.ResponseWriter, r *http.Request) {
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := driver.DBConn()
-	postRepo := repository.NewPostRepo(db)
-	var post Model.Post
+	postRepo := repositories.NewPostRepo(db)
+	var post models.Post
 	json.NewDecoder(r.Body).Decode(&post)
 	postRepo.CreatePost(post)
 
@@ -45,8 +45,8 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 func UpdatePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := driver.DBConn()
-	postRepo := repository.NewPostRepo(db)
-	var post Model.Post
+	postRepo := repositories.NewPostRepo(db)
+	var post models.Post
 	json.NewDecoder(r.Body).Decode(&post)
 	id := chi.URLParam(r, "id")
 	number, _ := strconv.ParseInt(id, 10, 0)
@@ -57,10 +57,11 @@ func UpdatePost(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// DeletePost remove a spesific post
 func DeletePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	db := driver.DBConn()
-	postRepo := repository.NewPostRepo(db)
+	postRepo := repositories.NewPostRepo(db)
 	id := chi.URLParam(r, "id")
 	number, _ := strconv.ParseInt(id, 10, 0)
 	postRepo.DeletePost(number)
