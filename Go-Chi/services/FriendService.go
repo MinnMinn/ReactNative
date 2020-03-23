@@ -1,66 +1,61 @@
 package services
 
 import (
-	"Go-Chi/interfaces"
 	"Go-Chi/driver"
 	"Go-Chi/models"
 	"Go-Chi/repositories"
-	"database/sql"
 )
 
-type Service struct {
-	interfaces.IService
-}
-
-func FriendService(db *sql.DB) interfaces.IService {
-	return &Service {
-	}
-}
-
-func (service *Service) SCheckNonAddFriend(friends models.Friends) bool {
+func CheckNonAddFriend(friends models.Friends) bool {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RCheckNonAddFriend(friends)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.CheckNonAddFriend(friends)
 }
 
-func (service *Service) SAddFriend(friends models.Friends) error {
+func AddFriend(friends models.Friends) error {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RAddFriend(friends)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.AddFriend(friends)
 }
 
-func (service *Service) SFindFriendsOfUser(m models.Email) []string {
+func FindFriendsOfUser(m models.Email) []string {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RFindFriendsOfUser(m)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.FindFriendsOfUser(m)
 }
 
-func (service *Service) SFindCommonFriends(friends models.Friends) []string {
+func FindCommonFriends(friends models.Friends) []string {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RFindCommonFriends(friends)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.FindCommonFriends(friends)
 }
 
-func (service *Service) SCheckNonFollow(subscribe models.Request) bool {
+func CheckNonFollow(subscribe models.Request) bool {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RCheckNonFollow(subscribe)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.CheckNonFollow(subscribe)
 }
 
-func (service *Service) SFollowFriend(subscribe models.Request) error {
+func FollowFriend(subscribe models.Request) error {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RFollowFriend(subscribe)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.FollowFriend(subscribe)
 }
 
-func (service *Service) SCheckNonBlock(subscribe models.Request) bool {
+func CheckNonBlock(subscribe models.Request) bool {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RCheckNonBlock(subscribe)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.CheckNonBlock(subscribe)
 }
 
-func (service *Service) SBlockFriend(subscribe models.Request) error {
+func BlockFriend(subscribe models.Request) error {
 	db := driver.DBConn()
-	connectionRepo := repositories.FriendRepository(db)
-	return  connectionRepo.RBlockFriend(subscribe)
+	connectRepository := repositories.FriendRepository(db)
+	return  connectRepository.BlockFriend(subscribe)
+}
+
+func NonBlockByEmail(sender models.Sender) []string {
+	db := driver.DBConn()
+	connectRepository := repositories.FriendRepository(db)
+	return connectRepository.NonBlockByEmail(sender)
 }
