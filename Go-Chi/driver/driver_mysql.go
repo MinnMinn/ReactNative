@@ -12,7 +12,7 @@ var router *chi.Mux
 const (
 	dbName = "Golang"
 	dbUser = "root"
-	dbPass = "Tgxkgc12"
+	dbPass = "secret"
 	dbDriver = "mysql"
 )
 
