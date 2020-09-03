@@ -7,13 +7,11 @@ import {
   Dimensions,
   Image,
   StatusBar,
+  TouchableOpacity,
   ScrollView
 } from "react-native";
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from './icon';
 import LinearGradient from 'react-native-linear-gradient';
-import { connect } from 'react-redux';
-import getFood from './sagas/Api';
-import { getFoodById } from './actions/index'
 
 export default class Detail extends React.Component{
 
@@ -40,10 +38,15 @@ export default class Detail extends React.Component{
             />
           </View>
           <View style={styles.back}>
-            <Ionicons
-              name="ios-arrow-round-back"
+          <TouchableOpacity
+            name="delete"
+            onPress={() => this.props.navigation.goBack()}
+          >
+          </TouchableOpacity>
+            <Icon
+              style={styles.buttonBack}
+              name="arrow-left2"
               color="white"
-              size={35}
               onPress={()=>this.props.navigation.goBack()}
             />
           </View>
@@ -62,15 +65,6 @@ export default class Detail extends React.Component{
           >
             <Text style={styles.textOrder}>ORDER NOW</Text>
           </LinearGradient>
-          {/* <View>
-            <Text style={styles.textPrice}>{item.description}</Text>
-          </View>
-          <View style={styles.image_container}>
-            <Image 
-              source={{uri: item.image}}
-              style={styles.image}
-            />
-          </View> */}
         </ScrollView>
       </View>
     )
@@ -143,25 +137,15 @@ var styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 100
   },
+  buttonBack: {
+    color: 'white',
+    marginTop: 15,
+    fontWeight: 'bold',
+    fontSize: 30
+  },
   textOrder: {
     color: 'white',
     fontWeight: 'bold',
     fontSize: 18
   }
 });
-
-// function mapStateToProps(state) {
-//   return { 
-    
-//   };
-// }
-
-// function mapDispatchToProps(dispatch, props) {
-//   return {
-//     getFoodById : (food) => {
-//       dispatch(getFoodById(food));
-//     }
-//   }
-// }
-
-// export default connect(mapStateToProps, mapDispatchToProps)(Detail);
